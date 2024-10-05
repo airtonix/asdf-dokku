@@ -48,6 +48,7 @@ download_release() {
 	curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
 }
 
+
 install_version() {
 	local install_type="$1"
 	local version="$2"
@@ -59,7 +60,9 @@ install_version() {
 
 	(
 		mkdir -p "$install_path"
-		cp -r "$ASDF_DOWNLOAD_PATH"/* "$install_path"
+
+		cp "$ASDF_DOWNLOAD_PATH"/contrib/dokku-client "$install_path"
+
 
 		# TODO: Assert dokku executable exists.
 		local tool_cmd
