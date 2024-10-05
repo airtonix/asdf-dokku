@@ -63,6 +63,19 @@ install_version() {
 
 		cp "$ASDF_DOWNLOAD_PATH"/contrib/dokku_client.sh "$install_path/dokku-client"
 
+		echo "Patching dokku-client script to run regardless of script name"
+
+		# the client contains a check for the script name bing executed.
+		# it only runs if the script name starts with either of : dokku, dokku_client.sh, or if the script name matches the output of command -v dokku
+		# we need to remove this check so it runs regardless.
+		# easiest way is to just add a bare call to main "$@" at the end of the script
+		echo "main \"\$@\"" >> "$install_path/dokku-client"
+		echo "exit \$?" >> "$install_path/dokku-client"
+
+		chmod +x "$install_path/dokku-client"
+
+		echo "Patching done"
+
 
 		# TODO: Assert dokku executable exists.
 		local tool_cmd
