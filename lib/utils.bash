@@ -48,28 +48,14 @@ download_release() {
 	curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
 }
 
-install_version() {
-	local install_type="$1"
-	local version="$2"
-	local install_path="${3%/bin}/bin"
+# the client contains a check for the script name bing executed.
+# it only runs if the script name starts with either of : dokku, dokku_client.sh, or if the script name matches the output of command -v dokku
+# we need to remove this check so it runs regardless.
+# easiest way is to just add a bare call to main "$@" at the end of the script
+monkey_patch() {
+	local script_path="$1"
 
-	if [ "$install_type" != "version" ]; then
-		fail "asdf-$TOOL_NAME supports release installs only"
-	fi
-
-	(
-		mkdir -p "$install_path"
-
-		cp "$ASDF_DOWNLOAD_PATH"/contrib/dokku_client.sh "$install_path/dokku-client"
-
-		echo "Patching dokku-client script to run regardless of script name"
-
-		# the client contains a check for the script name bing executed.
-		# it only runs if the script name starts with either of : dokku, dokku_client.sh, or if the script name matches the output of command -v dokku
-		# we need to remove this check so it runs regardless.
-		# easiest way is to just add a bare call to main "$@" at the end of the script
-
-		echo "
+	PATCH="""
 		case \"\$0\" in
 			version)
 				echo \"$version\"
@@ -86,11 +72,33 @@ install_version() {
 				exit \$?
 				;;
 		esac
-		" >> "$install_path/dokku-client"
+	"""
+
+	echo "Patching dokku-client script to run regardless of script name"
+
+	echo "$PATCH" >>"$script_path"
+
+	echo "Patching done"
+
+}
+
+install_version() {
+	local install_type="$1"
+	local version="$2"
+	local install_path="${3%/bin}/bin"
+
+	if [ "$install_type" != "version" ]; then
+		fail "asdf-$TOOL_NAME supports release installs only"
+	fi
+
+	(
+		mkdir -p "$install_path"
+
+		cp "$ASDF_DOWNLOAD_PATH"/contrib/dokku_client.sh "$install_path/dokku-client"
+
+		monkey_patch "$install_path/dokku-client"
 
 		chmod +x "$install_path/dokku-client"
-
-		echo "Patching done"
 
 		# TODO: Assert dokku executable exists.
 		local tool_cmd
