@@ -68,8 +68,25 @@ install_version() {
 		# it only runs if the script name starts with either of : dokku, dokku_client.sh, or if the script name matches the output of command -v dokku
 		# we need to remove this check so it runs regardless.
 		# easiest way is to just add a bare call to main "$@" at the end of the script
-		echo "main \"\$@\"" >>"$install_path/dokku-client"
-		echo "exit \$?" >>"$install_path/dokku-client"
+
+		echo "
+		case \"\$0\" in
+			version)
+				echo \"$version\"
+				;;
+			help)
+				if [ -z \"\$DOKKU_HOST\" ]; then
+					echo \"Warning: ensure you provide DOKKU_HOST that points to a valid dokku server\"
+					ehco \" \"
+				fi
+				echo \"Usage: dokku-client <command> [args]\"
+				exit 1
+			*)
+				main \"\$@\"
+				exit \$?
+				;;
+		esac
+		" >> "$install_path/dokku-client"
 
 		chmod +x "$install_path/dokku-client"
 
