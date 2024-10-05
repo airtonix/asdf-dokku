@@ -80,8 +80,6 @@ monkey_patch() {
 
 	echo "$PATCH" >>"$script_path"
 
-	cat "$script_path"
-
 	echo "Patching done"
 
 }
