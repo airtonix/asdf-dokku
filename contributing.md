@@ -1,6 +1,14 @@
 # Contributing
 
-Testing Locally:
+1. make a branch
+2. make changes
+3. commit changes
+4. push changes
+5. run `./test.sh` (only works with pushed changes)
+
+## Testing Locally:
+
+
 
 ```shell
 asdf plugin test <plugin-name> <plugin-url> [--asdf-tool-version <version>] [--asdf-plugin-gitref <git-ref>] [test-command*]

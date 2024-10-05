@@ -48,6 +48,41 @@ download_release() {
 	curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
 }
 
+# the client contains a check for the script name bing executed.
+# it only runs if the script name starts with either of : dokku, dokku_client.sh, or if the script name matches the output of command -v dokku
+# we need to remove this check so it runs regardless.
+# easiest way is to just add a bare call to main "$@" at the end of the script
+monkey_patch() {
+	local script_path="$1"
+
+	PATCH="""
+		case \"\$1\" in
+			version)
+				echo \"$version\"
+				exit 0
+				;;
+			help)
+				if [ -z \"\$DOKKU_HOST\" ]; then
+					echo \"Warning: ensure you provide DOKKU_HOST that points to a valid dokku server\"
+					ehco \" \"
+				fi
+				echo \"Usage: dokku-client <command> [args]\"
+				exit 1
+				;;
+			*)
+				main \"\$@\"
+				exit \$?
+				;;
+		esac
+	"""
+
+	echo "Patching dokku-client script to run regardless of script name"
+
+	echo "$PATCH" >>"$script_path"
+
+	echo "Patching done"
+
+}
 
 install_version() {
 	local install_type="$1"
@@ -63,6 +98,9 @@ install_version() {
 
 		cp "$ASDF_DOWNLOAD_PATH"/contrib/dokku_client.sh "$install_path/dokku-client"
 
+		monkey_patch "$install_path/dokku-client"
+
+		chmod +x "$install_path/dokku-client"
 
 		# TODO: Assert dokku executable exists.
 		local tool_cmd
