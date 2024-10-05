@@ -67,6 +67,7 @@ monkey_patch() {
 				fi
 				echo \"Usage: dokku-client <command> [args]\"
 				exit 1
+				;;
 			*)
 				main \"\$@\"
 				exit \$?
