@@ -48,7 +48,6 @@ download_release() {
 	curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
 }
 
-
 install_version() {
 	local install_type="$1"
 	local version="$2"
@@ -69,13 +68,12 @@ install_version() {
 		# it only runs if the script name starts with either of : dokku, dokku_client.sh, or if the script name matches the output of command -v dokku
 		# we need to remove this check so it runs regardless.
 		# easiest way is to just add a bare call to main "$@" at the end of the script
-		echo "main \"\$@\"" >> "$install_path/dokku-client"
-		echo "exit \$?" >> "$install_path/dokku-client"
+		echo "main \"\$@\"" >>"$install_path/dokku-client"
+		echo "exit \$?" >>"$install_path/dokku-client"
 
 		chmod +x "$install_path/dokku-client"
 
 		echo "Patching done"
-
 
 		# TODO: Assert dokku executable exists.
 		local tool_cmd
