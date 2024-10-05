@@ -61,7 +61,7 @@ install_version() {
 	(
 		mkdir -p "$install_path"
 
-		cp "$ASDF_DOWNLOAD_PATH"/contrib/dokku-client "$install_path"
+		cp "$ASDF_DOWNLOAD_PATH"/contrib/dokku_client.sh "$install_path"
 
 
 		# TODO: Assert dokku executable exists.
