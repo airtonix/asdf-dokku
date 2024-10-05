@@ -56,9 +56,10 @@ monkey_patch() {
 	local script_path="$1"
 
 	PATCH="""
-		case \"\$0\" in
+		case \"\$1\" in
 			version)
 				echo \"$version\"
+				exit 0
 				;;
 			help)
 				if [ -z \"\$DOKKU_HOST\" ]; then
