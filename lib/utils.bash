@@ -4,8 +4,8 @@ set -euo pipefail
 
 # TODO: Ensure this is the correct GitHub homepage where releases can be downloaded for dokku
 GH_REPO="https://github.com/dokku/dokku"
-TOOL_NAME="dokku"
-TOOL_TEST="dokku --version"
+TOOL_NAME="dokku-client"
+TOOL_TEST="dokku-client --version"
 
 fail() {
 	echo -e "asdf-$TOOL_NAME: $*"
@@ -61,7 +61,7 @@ install_version() {
 	(
 		mkdir -p "$install_path"
 
-		cp "$ASDF_DOWNLOAD_PATH"/contrib/dokku_client.sh "$install_path"
+		cp "$ASDF_DOWNLOAD_PATH"/contrib/dokku_client.sh "$install_path/dokku-client"
 
 
 		# TODO: Assert dokku executable exists.
