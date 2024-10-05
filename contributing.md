@@ -6,7 +6,7 @@ Testing Locally:
 asdf plugin test <plugin-name> <plugin-url> [--asdf-tool-version <version>] [--asdf-plugin-gitref <git-ref>] [test-command*]
 
 # TODO: adapt this
-asdf plugin test dokku-client https://github.com/airtonix/asdf-dokku-client.git "dokku --version"
+asdf plugin test dokku https://github.com/airtonix/asdf-dokku.git "dokku --version"
 ```
 
 Tests are automatically run in GitHub Actions on push and PR.
